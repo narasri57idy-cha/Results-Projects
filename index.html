@@ -395,7 +395,7 @@
 <header class="top">
   <div class="eyebrow-row"><span class="divider"></span> สำนักงานศึกษาธิการจังหวัดเลย</div>
   <h1>แดชบอร์ดผลการดำเนินงานโครงการ<br>ปีงบประมาณ พ.ศ. 2569</h1>
-  <p class="sub">ภาพรวมจำนวนโครงการ งบประมาณ (ข้อ 3) และสถานะการดำเนินงาน (ข้อ 4) ค้นหารายละเอียดครบทุกข้อของแต่ละโครงการ พร้อมสรุปปัญหา/อุปสรรค สาเหตุหลัก ปัจจัยความสำเร็จ ข้อเสนอปรับปรุง และข้อเสนอเชิงนโยบาย</p>
+  <p class="sub">ภาพรวมจำนวนโครงการ งบประมาณ  และสถานะการดำเนินงาน  ค้นหารายละเอียดครบทุกข้อของแต่ละโครงการ พร้อมสรุปปัญหา/อุปสรรค สาเหตุหลัก ปัจจัยความสำเร็จ ข้อเสนอปรับปรุง และข้อเสนอเชิงนโยบาย</p>
   <div class="hero-stats" id="heroStats"></div>
   <p class="sync-line" id="syncLine">กำลังโหลดข้อมูลล่าสุดจาก Google ชีต...</p>
 </header>
@@ -407,19 +407,19 @@
     <div class="section-head">
       <div>
         <h2>ภาพรวมโครงการ</h2>
-        <p>สรุปจำนวนโครงการ งบประมาณที่ได้รับจัดสรร (ข้อ 3) และสถานะการดำเนินงาน (ข้อ 4)</p>
+        <p>สรุปจำนวนโครงการ งบประมาณที่ได้รับจัดสรร  และสถานะการดำเนินงาน </p>
       </div>
     </div>
     <div class="overview-grid">
       <div class="panel">
         <h3>งบประมาณที่ได้รับจัดสรร (ข้อ 3)</h3>
-        <p class="panel-sub">สรุปงบประมาณของทั้ง 44 โครงการ</p>
+        <p class="panel-sub">สรุปงบประมาณ</p>
         <div class="budget-rows" id="budgetSummary"></div>
         <div class="top-budget-title">5 โครงการที่ได้รับจัดสรรงบประมาณสูงสุด</div>
         <div id="topBudgetList"></div>
       </div>
       <div class="panel">
-        <h3>สถานะการดำเนินงาน (ข้อ 4)</h3>
+        <h3>สถานะการดำเนินงาน </h3>
         <p class="panel-sub">จำแนกตามสถานะที่รายงาน</p>
         <div id="donut-wrap">
           <canvas id="donutChart" width="170" height="170"></canvas>
@@ -441,7 +441,7 @@
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="ค้นหาชื่อโครงการ เช่น พสน. หรือ ยาเสพติด...">
     </div>
-    <p class="search-hint" id="searchHint">พิมพ์ชื่อโครงการเพื่อแสดงรายละเอียดครบทุกข้อ (ข้อ 1–15)</p>
+    <p class="search-hint" id="searchHint">พิมพ์ชื่อโครงการเพื่อแสดงรายละเอียดครบทุกข้อ </p>
     <div class="search-results" id="searchResults"></div>
   </section>
 
@@ -662,13 +662,13 @@ function renderHeroStats(){
   const box = document.getElementById('heroStats');
   box.innerHTML = `
     <div class="hero-stat"><div class="num">${total}</div><div class="lbl">โครงการทั้งหมด</div></div>
-    <div class="hero-stat gold"><div class="num">${fmtBaht(totalBudget)}</div><div class="lbl">งบประมาณที่ได้รับจัดสรรรวม (ข้อ 3)</div></div>
+    <div class="hero-stat gold"><div class="num">${fmtBaht(totalBudget)}</div><div class="lbl">งบประมาณที่ได้รับจัดสรรรวม </div></div>
     <div class="hero-stat"><div class="num">${fmtBaht(avgBudget)}</div><div class="lbl">งบประมาณเฉลี่ยต่อโครงการ</div></div>
-    <div class="hero-stat"><div class="num">${pct}%</div><div class="lbl">ดำเนินการแล้วเสร็จ 100% (ข้อ 4)</div></div>
+    <div class="hero-stat"><div class="num">${pct}%</div><div class="lbl">ดำเนินการแล้วเสร็จ 100% </div></div>
   `;
 }
 
-/* ---------- budget panel (ข้อ 3) ---------- */
+/* ---------- budget panel  ---------- */
 function renderBudgetPanel(){
   const total = DATA.length;
   const budgets = DATA.map(d=>d.budget_num||0);
@@ -696,7 +696,7 @@ function renderBudgetPanel(){
   }).join('');
 }
 
-/* ---------- status bars + donut (ข้อ 4) ---------- */
+/* ---------- status bars + donut  ---------- */
 function renderStatusBars(){
   const c = statusCounts();
   const total = DATA.length;
