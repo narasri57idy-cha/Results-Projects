@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รายงานผลการดำเนินงานโครงการ | ศธจ.เลย ปีงบประมาณ 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root{
+    --navy-deep:#0F1F38;
+    --navy-mid:#1B3A63;
+    --navy-line:#2C4A76;
+    --gold:#C99A3B;
+    --gold-soft:#E8C87A;
+    --cream:#F7F4EC;
+    --cream-card:#FFFFFF;
+    --ink:#182333;
+    --ink-soft:#5B6579;
+    --green:#2F7A55;
+    --green-bg:#E4F1E9;
+    --amber:#B9791F;
+    --amber-bg:#FBEEDC;
+    --rust:#A6462F;
+    --rust-bg:#F7E6E0;
+    --blue:#2C5B8A;
+    --blue-bg:#E3EBF3;
+    --line:#E4DFD2;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Sarabun',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Mitr',sans-serif;}
+
+  /* ===== Header ===== */
+  header.top{
+    background:linear-gradient(160deg,var(--navy-deep) 0%,var(--navy-mid) 100%);
+    color:#F4EFE2;
+    padding:52px 6vw 46px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::after{
+    content:"";
+    position:absolute;
+    right:-8%;
+    top:-30%;
+    width:520px;
+    height:520px;
+    border-radius:50%;
+    background:radial-gradient(circle at center, rgba(201,154,59,0.20), transparent 70%);
+  }
+  .eyebrow-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    color:var(--gold-soft);
+    margin-bottom:18px;
+    letter-spacing:.02em;
+  }
+  .eyebrow-row .divider{width:28px;height:2px;background:var(--gold);display:inline-block;}
+  header.top h1{
+    font-size:clamp(28px,4vw,44px);
+    font-weight:600;
+    margin:0 0 10px;
+    max-width:900px;
+    color:#FBF8F0;
+  }
+  header.top p.sub{
+    font-size:16.5px;
+    color:#C7D0DE;
+    margin:0 0 34px;
+    max-width:720px;
+  }
+  .hero-stats{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-stat{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:var(--radius);
+    padding:18px 22px;
+    min-width:165px;
+    flex:1;
+    backdrop-filter:blur(6px);
+  }
+  .hero-stat .num{
+    font-family:'Mitr',sans-serif;
+    font-size:29px;
+    font-weight:600;
+    color:#FBF8F0;
+    line-height:1.1;
+  }
+  .hero-stat .lbl{
+    font-size:13px;
+    color:#B7C1D1;
+    margin-top:6px;
+  }
+  .hero-stat.gold .num{color:var(--gold-soft);}
+
+  .sync-line{
+    font-size:12.5px;
+    color:#9AA6B8;
+    margin:18px 0 0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    position:relative;
+    z-index:1;
+  }
+  .sync-line .dot-spin{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--gold-soft);
+    display:inline-block;
+    animation:pulse 1.2s infinite ease-in-out;
+  }
+  @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+  .sync-line.done .dot-spin{animation:none;background:#6FBF8B;}
+  .refresh-btn{
+    background:none;border:1px solid rgba(255,255,255,0.25);
+    color:#D8E0EC;border-radius:999px;padding:3px 12px;
+    font-size:12px;cursor:pointer;font-family:'Sarabun',sans-serif;
+    margin-left:4px;
+  }
+  .refresh-btn:hover{border-color:var(--gold-soft);color:var(--gold-soft);}
+
+  .error-banner{
+    background:var(--rust-bg);
+    border:1px solid var(--rust);
+    color:var(--rust);
+    border-radius:var(--radius);
+    padding:18px 22px;
+    font-size:14px;
+    margin-bottom:30px;
+    line-height:1.7;
+  }
+  .error-banner code{background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:4px;}
+
+  /* ===== Main container ===== */
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:44px 6vw 90px;
+  }
+  @media(min-width:1340px){ main{padding:44px 40px 90px;} }
+
+  section{margin-bottom:50px;}
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:18px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .section-head h2{font-size:21px;font-weight:600;color:var(--navy-deep);margin:0;}
+  .section-head p{font-size:13.5px;color:var(--ink-soft);margin:4px 0 0;}
+
+  .overview-grid{
+    display:grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap:26px;
+  }
+  @media(max-width:880px){ .overview-grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--cream-card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 28px;
+  }
+  .panel h3{
+    font-size:17px;
+    font-weight:600;
+    margin:0 0 4px;
+    color:var(--navy-deep);
+  }
+  .panel .panel-sub{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin:0 0 20px;
+  }
+
+  .status-bars{display:flex;flex-direction:column;gap:16px;}
+  .status-bar-row .top-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:7px;
+  }
+  .status-bar-row .top-line .name{font-weight:500;color:var(--ink);}
+  .status-bar-row .top-line .count{color:var(--ink-soft);}
+  .bar-track{
+    width:100%;
+    height:9px;
+    background:#EFEAE0;
+    border-radius:5px;
+    overflow:hidden;
+  }
+  .bar-fill{height:100%;border-radius:5px;}
+  .bar-fill.done{background:var(--green);}
+  .bar-fill.mid{background:var(--amber);}
+  .bar-fill.low{background:var(--rust);}
+
+  #donut-wrap{display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;}
+  #donutChart{max-width:170px;max-height:170px;}
+  .legend{display:flex;flex-direction:column;gap:12px;font-size:14px;}
+  .legend .dot{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:8px;}
+  .legend .row{display:flex;align-items:center;color:var(--ink);}
+  .legend .row b{margin-left:6px;color:var(--ink-soft);font-weight:400;}
+
+  .budget-rows{display:flex;flex-direction:column;gap:14px;margin-bottom:8px;}
+  .budget-summary-line{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:14.5px;
+  }
+  .budget-summary-line:last-child{border-bottom:none;}
+  .budget-summary-line .k{color:var(--ink-soft);}
+  .budget-summary-line .v{font-weight:600;color:var(--navy-deep);font-family:'Mitr',sans-serif;}
+
+  .top-budget-title{font-size:13px;font-weight:600;color:var(--navy-mid);margin:18px 0 12px;}
+  .top-budget-item{margin-bottom:12px;}
+  .top-budget-item .tb-top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px;}
+  .top-budget-item .tb-top .tb-name{color:var(--ink);max-width:75%;}
+  .top-budget-item .tb-top .tb-amt{color:var(--ink-soft);flex-shrink:0;}
+  .tb-track{width:100%;height:7px;background:#EFEAE0;border-radius:4px;overflow:hidden;}
+  .tb-fill{height:100%;background:var(--blue);border-radius:4px;}
+
+  /* ===== Search ===== */
+  .search-box{
+    position:relative;
+    max-width:560px;
+  }
+  .search-box input{
+    width:100%;
+    padding:14px 18px 14px 44px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:#fff;
+    font-family:'Sarabun',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+  }
+  .search-box input:focus{outline:2px solid var(--gold);outline-offset:0;}
+  .search-box svg{
+    position:absolute;left:15px;top:50%;transform:translateY(-50%);
+    opacity:.45;
+  }
+  .search-hint{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+  .search-results{margin-top:24px;display:flex;flex-direction:column;gap:16px;}
+
+  .detail-card{
+    background:var(--cream-card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 28px;
+  }
+  .detail-head{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    align-items:flex-start;
+    margin-bottom:18px;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--line);
+  }
+  .detail-num{
+    font-size:12.5px;
+    color:var(--gold);
+    font-weight:600;
+    font-family:'Mitr',sans-serif;
+    margin-bottom:4px;
+    display:block;
+  }
+  .detail-title{font-size:18px;font-weight:600;color:var(--ink);margin:0 0 6px;line-height:1.4;}
+  .detail-meta{font-size:13.5px;color:var(--ink-soft);}
+  .badge{
+    flex-shrink:0;
+    font-size:12.5px;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .badge.done{background:var(--green-bg);color:var(--green);}
+  .badge.mid{background:var(--amber-bg);color:var(--amber);}
+  .badge.low{background:var(--rust-bg);color:var(--rust);}
+
+  .detail-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px 28px;
+  }
+  @media(max-width:700px){ .detail-grid{grid-template-columns:1fr;} }
+  .detail-field{}
+  .detail-field.full{grid-column:1/-1;}
+  .detail-field .f-lbl{
+    font-size:12px;
+    font-weight:600;
+    color:var(--navy-mid);
+    margin-bottom:6px;
+  }
+  .detail-field .f-val{
+    font-size:14.5px;
+    color:var(--ink);
+    white-space:pre-line;
+  }
+  .detail-field .f-val.muted{color:var(--ink-soft);font-style:italic;}
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+    background:var(--cream-card);
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+  }
+
+  /* ===== Q10-14 tabs ===== */
+  .tab-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+  .tab-pill{
+    padding:10px 18px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    font-size:13.5px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    font-family:'Sarabun',sans-serif;
+    transition:all .15s ease;
+  }
+  .tab-pill:hover{border-color:var(--gold);color:var(--ink);}
+  .tab-pill.active{background:var(--navy-deep);border-color:var(--navy-deep);color:#F4EFE2;}
+
+  .qa-panel{background:var(--cream-card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px;}
+  .qa-stat-line{
+    font-size:14.5px;
+    color:var(--ink-soft);
+    margin-bottom:20px;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--line);
+  }
+  .qa-stat-line b{color:var(--navy-deep);}
+
+  .cause-bars{display:flex;flex-direction:column;gap:14px;margin-bottom:26px;}
+  .cause-bar-row .top-line{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;}
+  .cause-bar-row .top-line .name{color:var(--ink);}
+  .cause-bar-row .top-line .count{color:var(--ink-soft);flex-shrink:0;margin-left:12px;}
+  .cause-track{width:100%;height:8px;background:#EFEAE0;border-radius:4px;overflow:hidden;}
+  .cause-fill{height:100%;background:var(--blue);border-radius:4px;}
+
+  .qa-list{display:flex;flex-direction:column;gap:0;}
+  .qa-row{
+    padding:16px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .qa-row:last-child{border-bottom:none;}
+  .qa-row .qa-ans{
+    font-size:14.5px;
+    color:var(--ink);
+    white-space:pre-line;
+  }
+
+  footer{
+    text-align:center;
+    padding:30px 20px 50px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow-row"><span class="divider"></span> สำนักงานศึกษาธิการจังหวัดเลย</div>
+  <h1>แดชบอร์ดผลการดำเนินงานโครงการ<br>ปีงบประมาณ พ.ศ. 2569</h1>
+  <p class="sub">ภาพรวมจำนวนโครงการ งบประมาณ (ข้อ 3) และสถานะการดำเนินงาน (ข้อ 4) ค้นหารายละเอียดครบทุกข้อของแต่ละโครงการ พร้อมสรุปปัญหา/อุปสรรค สาเหตุหลัก ปัจจัยความสำเร็จ ข้อเสนอปรับปรุง และข้อเสนอเชิงนโยบาย</p>
+  <div class="hero-stats" id="heroStats"></div>
+  <p class="sync-line" id="syncLine">กำลังโหลดข้อมูลล่าสุดจาก Google ชีต...</p>
+</header>
+
+<main>
+  <div id="errorBanner" class="error-banner" style="display:none;"></div>
+
+  <section id="overviewSection">
+    <div class="section-head">
+      <div>
+        <h2>ภาพรวมโครงการ</h2>
+        <p>สรุปจำนวนโครงการ งบประมาณที่ได้รับจัดสรร (ข้อ 3) และสถานะการดำเนินงาน (ข้อ 4)</p>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="panel">
+        <h3>งบประมาณที่ได้รับจัดสรร (ข้อ 3)</h3>
+        <p class="panel-sub">สรุปงบประมาณของทั้ง 44 โครงการ</p>
+        <div class="budget-rows" id="budgetSummary"></div>
+        <div class="top-budget-title">5 โครงการที่ได้รับจัดสรรงบประมาณสูงสุด</div>
+        <div id="topBudgetList"></div>
+      </div>
+      <div class="panel">
+        <h3>สถานะการดำเนินงาน (ข้อ 4)</h3>
+        <p class="panel-sub">จำแนกตามสถานะที่รายงาน</p>
+        <div id="donut-wrap">
+          <canvas id="donutChart" width="170" height="170"></canvas>
+          <div class="legend" id="legendBox"></div>
+        </div>
+        <div class="status-bars" id="statusBars" style="margin-top:24px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="searchSection">
+    <div class="section-head">
+      <div>
+        <h2>ค้นหาโครงการ</h2>
+        <p>พิมพ์ชื่อโครงการหรือชื่อผู้รับผิดชอบ เพื่อดูรายละเอียดครบทุกข้อของโครงการนั้น</p>
+      </div>
+    </div>
+    <div class="search-box">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="ค้นหาชื่อโครงการ เช่น พสน. หรือ ยาเสพติด...">
+    </div>
+    <p class="search-hint" id="searchHint">พิมพ์ชื่อโครงการเพื่อแสดงรายละเอียดครบทุกข้อ (ข้อ 1–15)</p>
+    <div class="search-results" id="searchResults"></div>
+  </section>
+
+  <section id="qaSection">
+    <div class="section-head">
+      <div>
+        <h2>ปัญหา/อุปสรรค · สาเหตุหลัก · ปัจจัยความสำเร็จ · ข้อเสนอปรับปรุง · ข้อเสนอเชิงนโยบาย</h2>
+      </div>
+    </div>
+    <div class="tab-pills" id="qaTabs"></div>
+    <div class="qa-panel" id="qaContent"></div>
+  </section>
+
+</main>
+
+<footer>จัดทำจากข้อมูลรายงานผลโครงการ สำนักงานศึกษาธิการจังหวัดเลย ประจำปีงบประมาณ พ.ศ. 2569</footer>
+
+<script>
+
+/* ================= LIVE DATA SOURCE =================
+   Pulls responses directly from the Google Sheet behind the report form.
+   To point this at a different sheet, change SHEET_ID below.
+   SHEET_NAME must exactly match the tab name shown at the bottom of the
+   Google Sheet (e.g. "Form Responses 1"). If the tab is renamed, update
+   this constant to match.
+====================================================== */
+const SHEET_ID = '1KqVGU2HoCyrqTn9W81ceCvonjEK5IsZW6HbNnxcTr6c';
+const SHEET_NAME = 'Form Responses 1';
+const SHEET_GID = '0'; // fallback only, used if the name-based lookup fails
+const CSV_URL_CANDIDATES = [
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`,
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`,
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`
+];
+
+let DATA = [];
+
+const THAI_DIGITS = '๐๑๒๓๔๕๖๗๘๙';
+function thaiToArabic(s){
+  return s.split('').map(ch=>{
+    const i = THAI_DIGITS.indexOf(ch);
+    return i>-1 ? String(i) : ch;
+  }).join('');
+}
+
+function parseBudget(raw){
+  if(raw===undefined || raw===null) return null;
+  let s = thaiToArabic(String(raw));
+  s = s.replace('บาท','').replace('(จากหน่วยงานอื่น)','').replace(/,/g,'');
+  s = s.replace(/\.\-\s*$/,'').trim();
+  const m = s.match(/[\d]+(\.\d+)?/);
+  if(!m) return null;
+  const n = parseFloat(m[0]);
+  return isNaN(n) ? null : n;
+}
+
+function statusCategory(s){
+  if(!s) return 'อื่นๆ';
+  if(s.includes('100%') || s.includes('เสร็จสิ้น')) return 'เสร็จสิ้น 100%';
+  if(s.includes('75')) return '75–99%';
+  if(s.includes('50')) return '50–74%';
+  if(s.includes('25')) return '25–49%';
+  if(s.includes('ยังไม่') || s.includes('0%')) return 'ยังไม่เริ่ม';
+  return 'อื่นๆ';
+}
+
+// Heuristic fix for the occasional data-entry mixup where a respondent
+// typed the project name into the "name" field and their own name into
+// the "person" field (or vice versa).
+function fixSwappedNamePerson(person, name){
+  const looksLikeProjectTitle = (t)=> /โครงการ|ประจำปี|ปีงบประมาณ|กิจกรรม/.test(t) && t.length > 25;
+  const looksLikePersonName = (t)=> /^(นาย|นาง|นางสาว|น\.ส\.)/.test(t.trim()) || t.trim().length <= 20;
+  if(looksLikeProjectTitle(person) && looksLikePersonName(name) && !looksLikeProjectTitle(name)){
+    return {person: name, name: person};
+  }
+  return {person, name};
+}
+
+function transformRow(cols, idx){
+  const get = (i)=> (cols[i]||'').toString().trim();
+  const swapped = fixSwappedNamePerson(get(1), get(2));
+  const budgetRaw = get(3);
+  const budgetUsedRaw = get(7);
+  const statusRaw = get(5);
+  const causeRaw = get(12);
+  const causeList = causeRaw ? causeRaw.split(',').map(c=>c.trim()).filter(Boolean) : [];
+
+  return {
+    id: idx + 1,
+    person: swapped.person,
+    name: swapped.name,
+    budget: budgetRaw,
+    status: statusRaw,
+    activity: get(6),
+    budget_used: budgetUsedRaw,
+    target_group: get(8),
+    achievement: get(9),
+    qualitative: get(10),
+    problem: get(11),
+    cause: causeRaw,
+    success_factor: get(13),
+    improvement: get(14),
+    policy_proposal: get(15),
+    notes: get(16),
+    budget_num: parseBudget(budgetRaw),
+    budget_used_num: parseBudget(budgetUsedRaw),
+    status_cat: statusCategory(statusRaw),
+    cause_list: causeList
+  };
+}
+
+function rowIsBlank(cols){
+  return cols.every(c => !c || !c.toString().trim());
+}
+
+async function fetchCsvFromCandidates(){
+  let lastErr = null;
+  for(const url of CSV_URL_CANDIDATES){
+    try{
+      const res = await fetch(url, {cache: 'no-store'});
+      if(!res.ok){ lastErr = new Error('HTTP ' + res.status); continue; }
+      const text = await res.text();
+      const trimmed = text.trim();
+      // A real CSV export never starts with an HTML document - that's the
+      // tell-tale sign of a Google sign-in/permission wall being returned
+      // instead of actual data.
+      if(trimmed.startsWith('<') || /<html/i.test(trimmed.slice(0, 200))){
+        lastErr = new Error('ชีตนี้ต้องเข้าสู่ระบบจึงจะดูได้ (ได้รับหน้า HTML แทนข้อมูล CSV)');
+        continue;
+      }
+      const parsed = Papa.parse(trimmed, {skipEmptyLines: true});
+      const rows = parsed.data;
+      if(!rows || rows.length < 2){ lastErr = new Error('ไม่พบข้อมูลในชีต'); continue; }
+      return rows;
+    }catch(err){
+      lastErr = err;
+    }
+  }
+  throw lastErr || new Error('ไม่สามารถโหลดข้อมูลได้');
+}
+
+async function loadData(){
+  const syncLine = document.getElementById('syncLine');
+  const errorBanner = document.getElementById('errorBanner');
+  errorBanner.style.display = 'none';
+  syncLine.classList.remove('done');
+  syncLine.innerHTML = '<span class="dot-spin"></span> กำลังโหลดข้อมูลล่าสุดจาก Google ชีต...';
+
+  try{
+    const rows = await fetchCsvFromCandidates();
+    const dataRows = rows.slice(1).filter(r => !rowIsBlank(r));
+    DATA = dataRows.map((cols, idx) => transformRow(cols, idx));
+
+    const now = new Date();
+    const timeStr = now.toLocaleString('th-TH', {dateStyle:'medium', timeStyle:'short'});
+    syncLine.classList.add('done');
+    syncLine.innerHTML = `<span class="dot-spin"></span> ข้อมูลล่าสุด ณ ${timeStr} (${DATA.length} โครงการ) <button class="refresh-btn" id="refreshBtn" type="button">รีเฟรช</button>`;
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+
+    renderAll();
+  }catch(err){
+    console.error(err);
+    syncLine.innerHTML = 'โหลดข้อมูลไม่สำเร็จ <button class="refresh-btn" id="retryBtn" type="button">ลองอีกครั้ง</button>';
+    document.getElementById('retryBtn').addEventListener('click', loadData);
+    errorBanner.style.display = 'block';
+    errorBanner.innerHTML = `ไม่สามารถโหลดข้อมูลจาก Google ชีตได้ในขณะนี้ สาเหตุที่เป็นไปได้: (1) ชื่อแท็บชีตถูกเปลี่ยนจาก "<code>${SHEET_NAME}</code>" (2) สิทธิ์การแชร์ถูกเปลี่ยนจาก "ทุกคนที่มีลิงก์" หรือ (3) ปัญหาการเชื่อมต่อชั่วคราว กรุณาตรวจสอบค่า <code>SHEET_NAME</code> ในไฟล์นี้ให้ตรงกับชื่อแท็บจริงในชีต<br>รายละเอียดข้อผิดพลาด: <code>${(err && err.message) || err}</code>`;
+  }
+}
+
+const STATUS_ORDER = ["เสร็จสิ้น 100%","75–99%","50–74%","25–49%","ยังไม่เริ่ม"];
+const STATUS_CLASS = {
+  "เสร็จสิ้น 100%":"done",
+  "75–99%":"mid",
+  "50–74%":"low",
+  "25–49%":"low",
+  "ยังไม่เริ่ม":"low"
+};
+const STATUS_COLOR = {
+  "เสร็จสิ้น 100%":"#2F7A55",
+  "75–99%":"#B9791F",
+  "50–74%":"#A6462F",
+  "25–49%":"#A6462F",
+  "ยังไม่เริ่ม":"#8A8578"
+};
+const EMPTY_LIKE = new Set(["", "-", "ไม่มี", "ไม่มี ", "-  "]);
+
+function fmtBaht(n){
+  if(n===null || n===undefined || isNaN(n)) return '-';
+  return Math.round(n).toLocaleString('th-TH') + ' บาท';
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function isEmptyLike(v){
+  if(!v) return true;
+  return EMPTY_LIKE.has(v.trim());
+}
+
+/* ---------- counts ---------- */
+function statusCounts(){
+  const c = {};
+  STATUS_ORDER.forEach(s=>c[s]=0);
+  DATA.forEach(d=>{ c[d.status_cat] = (c[d.status_cat]||0)+1; });
+  return c;
+}
+
+/* ---------- hero stats ---------- */
+function renderHeroStats(){
+  const c = statusCounts();
+  const total = DATA.length;
+  const done = c["เสร็จสิ้น 100%"]||0;
+  const pct = Math.round((done/total)*100);
+  const totalBudget = DATA.reduce((s,d)=> s + (d.budget_num||0), 0);
+  const avgBudget = totalBudget/total;
+  const box = document.getElementById('heroStats');
+  box.innerHTML = `
+    <div class="hero-stat"><div class="num">${total}</div><div class="lbl">โครงการทั้งหมด</div></div>
+    <div class="hero-stat gold"><div class="num">${fmtBaht(totalBudget)}</div><div class="lbl">งบประมาณที่ได้รับจัดสรรรวม (ข้อ 3)</div></div>
+    <div class="hero-stat"><div class="num">${fmtBaht(avgBudget)}</div><div class="lbl">งบประมาณเฉลี่ยต่อโครงการ</div></div>
+    <div class="hero-stat"><div class="num">${pct}%</div><div class="lbl">ดำเนินการแล้วเสร็จ 100% (ข้อ 4)</div></div>
+  `;
+}
+
+/* ---------- budget panel (ข้อ 3) ---------- */
+function renderBudgetPanel(){
+  const total = DATA.length;
+  const budgets = DATA.map(d=>d.budget_num||0);
+  const totalBudget = budgets.reduce((a,b)=>a+b,0);
+  const avg = totalBudget/total;
+  const max = Math.max(...budgets);
+  const min = Math.min(...budgets.filter(b=>b>0));
+
+  document.getElementById('budgetSummary').innerHTML = `
+    <div class="budget-summary-line"><span class="k">งบประมาณรวมทั้งหมด</span><span class="v">${fmtBaht(totalBudget)}</span></div>
+    <div class="budget-summary-line"><span class="k">งบประมาณเฉลี่ยต่อโครงการ</span><span class="v">${fmtBaht(avg)}</span></div>
+    <div class="budget-summary-line"><span class="k">งบประมาณสูงสุด</span><span class="v">${fmtBaht(max)}</span></div>
+    <div class="budget-summary-line"><span class="k">งบประมาณต่ำสุด</span><span class="v">${fmtBaht(min)}</span></div>
+  `;
+
+  const top5 = [...DATA].sort((a,b)=>(b.budget_num||0)-(a.budget_num||0)).slice(0,5);
+  document.getElementById('topBudgetList').innerHTML = top5.map(d=>{
+    const w = Math.round(((d.budget_num||0)/max)*100);
+    return `
+      <div class="top-budget-item">
+        <div class="tb-top"><span class="tb-name">${escapeHtml(d.name)}</span><span class="tb-amt">${fmtBaht(d.budget_num)}</span></div>
+        <div class="tb-track"><div class="tb-fill" style="width:${w}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ---------- status bars + donut (ข้อ 4) ---------- */
+function renderStatusBars(){
+  const c = statusCounts();
+  const total = DATA.length;
+  const box = document.getElementById('statusBars');
+  box.innerHTML = STATUS_ORDER.filter(s=>c[s]>0).map(s=>{
+    const pct = Math.round((c[s]/total)*100);
+    return `
+      <div class="status-bar-row">
+        <div class="top-line"><span class="name">${s}</span><span class="count">${c[s]} โครงการ · ${pct}%</span></div>
+        <div class="bar-track"><div class="bar-fill ${STATUS_CLASS[s]}" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderDonut(){
+  const c = statusCounts();
+  const total = DATA.length;
+  const entries = STATUS_ORDER.filter(s=>c[s]>0).map(s=>({label:s,val:c[s]}));
+  const canvas = document.getElementById('donutChart');
+  const ctx = canvas.getContext('2d');
+  const cx = 85, cy = 85, rOuter = 78, rInner = 50;
+  let startAngle = -Math.PI/2;
+  ctx.clearRect(0,0,170,170);
+  entries.forEach(e=>{
+    const angle = (e.val/total) * Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,rOuter,startAngle,startAngle+angle);
+    ctx.closePath();
+    ctx.fillStyle = STATUS_COLOR[e.label];
+    ctx.fill();
+    startAngle += angle;
+  });
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.beginPath();
+  ctx.arc(cx,cy,rInner,0,Math.PI*2);
+  ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = '#182333';
+  ctx.font = "600 24px Mitr, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(total, cx, cy-6);
+  ctx.font = "400 11px Sarabun, sans-serif";
+  ctx.fillStyle = "#5B6579";
+  ctx.fillText("โครงการ", cx, cy+13);
+
+  const legend = document.getElementById('legendBox');
+  legend.innerHTML = entries.map(e=>`
+    <div class="row"><span class="dot" style="background:${STATUS_COLOR[e.label]}"></span>${e.label} <b>(${e.val})</b></div>
+  `).join('');
+}
+
+/* ---------- search -> full detail ---------- */
+const DETAIL_FIELDS = [
+  {key:'activity', lbl:'5. กิจกรรมที่ดำเนินการแล้ว มีอะไรบ้าง', full:true},
+  {key:'budget_used_fmt', lbl:'6. งบประมาณที่ใช้จ่ายไปแล้ว (บาท)'},
+  {key:'target_group', lbl:'7. กลุ่มเป้าหมายที่ได้รับประโยชน์ (เชิงปริมาณ)'},
+  {key:'achievement', lbl:'8. ผลสำเร็จที่เกิดขึ้นจริง เทียบกับเป้าหมาย'},
+  {key:'qualitative', lbl:'9. ผลที่เกิดขึ้นเชิงคุณภาพ', full:true},
+  {key:'problem', lbl:'10. ปัญหาหรืออุปสรรคที่พบ', full:true},
+  {key:'cause', lbl:'11. สาเหตุหลักของปัญหา', full:true},
+  {key:'success_factor', lbl:'12. ปัจจัยที่ทำให้ประสบความสำเร็จ', full:true},
+  {key:'improvement', lbl:'13. สิ่งที่ควรปรับปรุงในปีต่อไป', full:true},
+  {key:'policy_proposal', lbl:'14. ข้อเสนอเชิงนโยบาย', full:true},
+  {key:'notes', lbl:'15. หมายเหตุเพิ่มเติม'},
+];
+
+function detailCardHtml(d){
+  const cls = STATUS_CLASS[d.status_cat] || "low";
+  const withFmt = {...d, budget_used_fmt: d.budget_used ? d.budget_used : (d.budget_used_num ? fmtBaht(d.budget_used_num) : '')};
+  const fields = DETAIL_FIELDS.map(f=>{
+    const val = withFmt[f.key];
+    const displayVal = (val && val.trim()) ? escapeHtml(val) : '<span class="f-val muted">ไม่ได้ระบุ</span>';
+    return `
+      <div class="detail-field ${f.full?'full':''}">
+        <div class="f-lbl">${f.lbl}</div>
+        <div class="f-val">${(val && val.trim()) ? escapeHtml(val) : '<em class="f-val muted">ไม่ได้ระบุ</em>'}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="detail-card">
+      <div class="detail-head">
+        <div>
+          <span class="detail-num">โครงการที่ ${d.id.toString().padStart(2,'0')}</span>
+          <p class="detail-title">${escapeHtml(d.name)}</p>
+          <div class="detail-meta">1. ผู้รับผิดชอบ: ${escapeHtml(d.person)} &nbsp;·&nbsp; 3. งบประมาณที่ได้รับจัดสรร: ${escapeHtml(d.budget) || fmtBaht(d.budget_num)}</div>
+        </div>
+        <span class="badge ${cls}">4. ${d.status_cat}</span>
+      </div>
+      <div class="detail-grid">${fields}</div>
+    </div>
+  `;
+}
+
+function runSearch(term){
+  const results = document.getElementById('searchResults');
+  const hint = document.getElementById('searchHint');
+  if(!term.trim()){
+    results.innerHTML = '';
+    hint.style.display = 'block';
+    return;
+  }
+  hint.style.display = 'none';
+  const t = term.toLowerCase();
+  const matches = DATA.filter(d=> d.name.toLowerCase().includes(t) || d.person.toLowerCase().includes(t));
+  if(matches.length===0){
+    results.innerHTML = `<div class="empty-state">ไม่พบโครงการที่ตรงกับคำค้นหา "${escapeHtml(term)}"</div>`;
+    return;
+  }
+  results.innerHTML = matches.map(detailCardHtml).join('');
+}
+
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  runSearch(e.target.value);
+});
+
+/* ---------- Q10-14 section ---------- */
+const QA_TABS = [
+  {key:'problem', label:'ปัญหา/อุปสรรค'},
+  {key:'cause', label:'สาเหตุหลักของปัญหา'},
+  {key:'success_factor', label:'ปัจจัยความสำเร็จ'},
+  {key:'improvement', label:'ข้อเสนอปรับปรุง'},
+  {key:'policy_proposal', label:'ข้อเสนอเชิงนโยบาย'},
+];
+let activeQaTab = 'problem';
+
+const CAUSE_COLOR_BASE = '#2C5B8A';
+
+function renderQaTabs(){
+  const box = document.getElementById('qaTabs');
+  box.innerHTML = QA_TABS.map(t=>`<button class="tab-pill ${t.key===activeQaTab?'active':''}" data-key="${t.key}">${t.label}</button>`).join('');
+  box.querySelectorAll('.tab-pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeQaTab = btn.dataset.key;
+      renderQaTabs();
+      renderQaContent();
+    });
+  });
+}
+
+function renderQaContent(){
+  const el = document.getElementById('qaContent');
+
+  if(activeQaTab === 'cause'){
+    const counter = {};
+    DATA.forEach(d=>{ (d.cause_list||[]).forEach(c=>{ counter[c] = (counter[c]||0)+1; }); });
+    const entries = Object.entries(counter).sort((a,b)=>b[1]-a[1]);
+    const maxVal = Math.max(...entries.map(e=>e[1]));
+    const total = DATA.length;
+    const noProblemCount = counter['ไม่มีปัญหา / อุปสรรค'] || 0;
+
+    const barsHtml = entries.map(([label,val])=>{
+      const w = Math.round((val/maxVal)*100);
+      return `
+        <div class="cause-bar-row">
+          <div class="top-line"><span class="name">${escapeHtml(label)}</span><span class="count">${val} โครงการ</span></div>
+          <div class="cause-track"><div class="cause-fill" style="width:${w}%"></div></div>
+        </div>
+      `;
+    }).join('');
+
+    el.innerHTML = `
+      <div class="qa-stat-line"><b>${total - noProblemCount}</b> จาก <b>${total}</b> โครงการ รายงานว่าพบปัญหาหรืออุปสรรคอย่างน้อย 1 ด้าน (เลือกได้มากกว่า 1 ข้อ)</div>
+      <div class="cause-bars">${barsHtml}</div>
+    `;
+    return;
+  }
+
+  // free-text tabs: problem, success_factor, improvement, policy_proposal
+  const entries = DATA
+    .map(d=> d[activeQaTab])
+    .filter(v=> !isEmptyLike(v));
+
+  const total = DATA.length;
+  const label = QA_TABS.find(t=>t.key===activeQaTab).label;
+
+  const rowsHtml = entries.map(v=>`
+    <div class="qa-row">
+      <div class="qa-ans">${escapeHtml(v)}</div>
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="qa-stat-line"><b>${entries.length}</b> จาก <b>${total}</b> โครงการ มีข้อมูลรายงานใน${label}</div>
+    <div class="qa-list">${rowsHtml || '<div class="empty-state">ไม่มีโครงการที่รายงานข้อมูลในหัวข้อนี้</div>'}</div>
+  `;
+}
+
+/* ---------- init ---------- */
+function renderAll(){
+  renderHeroStats();
+  renderBudgetPanel();
+  renderStatusBars();
+  renderDonut();
+  renderQaTabs();
+  renderQaContent();
+  // re-run search if the person already typed something before data loaded/refreshed
+  const currentSearch = document.getElementById('searchInput').value;
+  if(currentSearch.trim()) runSearch(currentSearch);
+}
+
+loadData();
+</script>
+</body>
+</html>
